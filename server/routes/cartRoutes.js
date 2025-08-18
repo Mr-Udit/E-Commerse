@@ -1,10 +1,19 @@
-import express from 'express';
-import { addToCart, isAuthenticated, viewCart } from '../controllers/cartController.js';
+import express from "express";
+import {
+  isAuthenticated,
+  addToCart,
+  updateCartItem,
+  viewCart,
+  deleteFromCart,
+  deleteAllFromCart
+} from "../controllers/cartController.js";
 
 const router = express.Router();
 
-// Add to cart
-router.post('/add', isAuthenticated, addToCart);
-// get user cart
-router.get('/', isAuthenticated, viewCart)
+router.post("/add", isAuthenticated, addToCart);
+router.put("/update", isAuthenticated, updateCartItem);
+router.get("/view", isAuthenticated, viewCart);
+router.delete("/delete/:id", isAuthenticated, deleteFromCart);
+router.delete("/deleteAll", isAuthenticated, deleteAllFromCart);
+
 export default router;

@@ -1,5 +1,5 @@
 import Product from '../models/Product.js';
-import { uploadToCloudinary, removeFromCloudinary } from '../utils/cloudinary.js';
+import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js';
 
 export async function createProduct(req, res) {
     try {
@@ -44,17 +44,58 @@ export async function getProductDetails(req, res) {
     }
 }
 
-export async function updateProduct(req, res) {
+export const updateProduct = async (req, res) => {
     try {
-        const updates = req.body;
-        updates.updatedAt = new Date();
-        const product = await Product.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
-        if (!product) return res.status(404).json({ error: 'Product not found' });
-        res.json(product);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
+        const { id } = req.params;
+        const { name, description, price, categories, brand, stock, imagesToDelete } = req.body;
+
+        let product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // 🗑 Delete selected images from Cloudinary & DB
+        if (imagesToDelete && Array.isArray(imagesToDelete)) {
+            for (const public_id of imagesToDelete) {
+                await deleteFromCloudinary(public_id); // delete from Cloudinary
+                product.images = product.images.filter(img => img.public_id !== public_id); // remove from DB
+            }
+        }
+
+        // 📤 Add new uploaded images to product
+        if (req.files && req.files.length > 0) {
+            const uploadedImages = [];
+            for (const file of req.files) {
+                const result = await uploadToCloudinary(file.path, "products");
+                uploadedImages.push({
+                    url: result.secure_url,
+                    public_id: result.public_id
+                });
+            }
+            product.images.push(...uploadedImages);
+        }
+
+        // 📝 Update other fields if provided
+        if (name) product.name = name;
+        if (description) product.description = description;
+        if (price) product.price = price;
+        if (categories) product.categories = categories;
+        if (brand) product.brand = brand;
+        if (stock !== undefined) product.stock = stock;
+
+        product.updatedAt = Date.now();
+
+        await product.save();
+        res.status(200).json({
+            message: "Product updated successfully",
+            product
+        });
+
+    } catch (error) {
+        console.error("Error updating product:", error);
+        res.status(500).json({ message: "Server error" });
     }
-}
+};
 
 export async function deleteProduct(req, res) {
     try {

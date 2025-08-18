@@ -4,7 +4,21 @@ import { sendEmail } from '../utils/sendEmail.js';
 import jwt from 'jsonwebtoken';
 
 export const registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role , dateOfBirth, phone , gender } = req.body;
+  let dob;
+  if (dateOfBirth) {
+    // Try to parse DD-MM-YYYY to YYYY-MM-DD
+    const parts = dateOfBirth.split('-');
+    if (parts.length === 3) {
+      // Rearrange to YYYY-MM-DD
+      dob = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    // Convert to Date object
+    dob = new Date(dateOfBirth);
+    if (isNaN(dob.getTime())) {
+      return res.status(400).json({ message: 'Invalid dateOfBirth format. Use DD-MM-YYYY.' });
+    }
+  }
   const userExists = await User.findOne({ email });
   if (userExists) return res.status(400).json({ message: 'Email already exists' });
   // validate role set defalt to 'user' if not provided
@@ -15,7 +29,7 @@ export const registerUser = async (req, res) => {
   if (!validRoles.includes(role)) {
     return res.status(400).json({ message: 'Invalid role' });
   }
-  const user = await User.create({ name, email, password, role });
+  const user = await User.create({ name, email, password, role , dateOfBirth : dob , phone , gender });
   const token = generateVerificationToken(user._id);
   user.verificationToken = token;
   user.verificationTokenExpires = Date.now() + 3600000;
@@ -41,7 +55,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-  const { token } = req.query;
+  const { token } = req.body;
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);

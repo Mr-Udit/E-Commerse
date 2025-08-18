@@ -9,7 +9,7 @@
     "dev": "nodemon server.js",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "client": "cd client && npm start",
+    "client": "cd client && npm run dev",
     "server": "nodemon server.js",
     "dev:all": "concurrently \"npm run server\" \"npm run client\""
   },
