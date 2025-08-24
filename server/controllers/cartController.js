@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import Cart from '../models/Cart.js';
 import CartItem from '../models/CartItem.js';
-import Product from '../models/Product.js';
 
 // Middleware
 export function isAuthenticated(req, res, next) {
@@ -23,15 +22,15 @@ export function isAuthenticated(req, res, next) {
 export async function addToCart(req, res) {
   try {
     const userId = req.user.id;
-    const { productId } = req.body;
+    const { productId , quantity } = req.body;
 
     if (!productId) {
       return res.status(400).json({ message: "Product ID is required" });
     }
 
-    let cart = await Cart.findOne({ user: userId }).populate("items");
+    let cart = await Cart.findOne({ user: userId }).populate("items");2
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+        cart = await Cart.create({ user: userId, items: [] });
     }
 
     // 🔍 Check if product already exists in cart
@@ -42,14 +41,14 @@ export async function addToCart(req, res) {
 
     if (existingItem) {
       return res.status(400).json({
-        message: "This product is already in your cart. You can only add it once.",
+        message: "This product is already in your cart.",
       });
     }
 
     // ✅ Add only if it doesn't exist
     const newItem = await CartItem.create({
       product: productId,
-      quantity: 1, // always 1, since only one allowed
+      quantity: quantity, // always 1, since only one allowed
     });
 
     cart.items.push(newItem._id);
@@ -135,17 +134,11 @@ export async function viewCart(req, res) {
             return res.status(200).json({ message: 'Cart is empty', cart: { items: [], totalPrice: 0 } });
         }
 
-        let totalPrice = 0;
-        cart.items.forEach(item => {
-            totalPrice += item.price * item.quantity;
-        });
-
         return res.status(200).json({
             cart: {
                 id: cart._id,
                 user: cart.user,
                 items: cart.items,
-                totalPrice
             }
         });
 
@@ -174,7 +167,18 @@ export async function deleteFromCart(req, res) {
         cart.items.splice(itemIndex, 1);
         await cart.save();
         await CartItem.findByIdAndDelete(itemId);
-        return res.status(200).json({ message: 'Item removed from cart', cart });
+        const usercart = await Cart.findOne({ user: userId }).populate({
+            path: 'items',
+            populate: { path: 'product', model: 'Product' }
+        });
+
+        return res.status(200).json({
+            message: 'Item removed from cart', cart: {
+                id: usercart._id,
+                user: usercart.user,
+                items: usercart.items,
+            }
+        });
     } catch (err) {
         console.error('Error deleting item from cart:', err);
         return res.status(500).json({ error: 'Internal server error' });

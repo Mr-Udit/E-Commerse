@@ -3,25 +3,18 @@ import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js
 
 export async function createProduct(req, res) {
     try {
-        const { name, description, price, categorie, brand, stock } = req.body;
+        const { name, price, description, category, images } = req.body;
 
-        const imageUploadPromises = req.files.map(file => uploadToCloudinary(file.path));
-        const images = await Promise.all(imageUploadPromises);
+        if (!name || !price || !images || images.length === 0) {
+            return res.status(400).json({ error: "Name, price, and at least 1 image required" });
+        }
 
-        const product = new Product({
-            name,
-            description,
-            price,
-            categories: categorie,
-            brand,
-            stock,
-            images
-        });
+        const newProduct = new Product({ name, price, description, category, images });
+        await newProduct.save();
 
-        await product.save();
-        res.status(201).json({ message: 'Product created successfully', product });
+        res.json({ message: "Product created successfully", product: newProduct });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Failed to create product" });
     }
 }
 

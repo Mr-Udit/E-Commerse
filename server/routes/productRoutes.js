@@ -11,7 +11,9 @@ import upload from '../middleware/multer.js';
 
 const router = express.Router();
 
-router.post('/add', ...productMiddleware('create'), upload.array('images', 5), createProduct);
+//  upload.array('images', 5),
+// , ...productMiddleware('create')
+router.post('/add', ...productMiddleware('create'), createProduct);
 router.get('/get', ...productMiddleware('list'), listProducts);
 router.get('/view/:id', ...productMiddleware('view'), getProductDetails);
 router.put('/update/:id', ...productMiddleware('edit'), updateProduct);
