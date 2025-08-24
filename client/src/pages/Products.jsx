@@ -21,9 +21,6 @@ const Products = () => {
 
     fetchProducts();
   }, []); // ✅ Empty array so it runs only once
-const handleAddToCart = async (productId) => {
-
-}
   if (loading) {
     return <h2>Loading products...</h2>;
   }
@@ -31,33 +28,42 @@ const handleAddToCart = async (productId) => {
   if (products.length === 0) {
     return <h2>No products found.</h2>;
   }
+  const handleAddToCart = async (productId) => {
+    const resp = await addToCart(productId);
+    alert(resp);
+  };
   return (
     <>
-    <h1 className="title">Explore Products</h1>
-    <div className="products">
-      {products.map((product) => (
-        <div className="product" key={product._id}>
-          {product.images && product.images.length > 0 ? (
-            <img
-              src={product.images[0].url}
-              height={200}
-              width={200}
-              alt={product.name}
-            />
-          ) : (
-            <p>No Image Available</p>
-          )}
-          <h3>{product.name}</h3>
-          <p>${product.price}</p>
-          <div className="buttons">
-            <Link to={`/products/${product._id}`} className="add-to-cart">
-              Details
-            </Link>
-            <button className="add-to-cart" onClick={() => addToCart(product._id)}>Add to Cart</button>
+      <h1 className="title">Explore Products</h1>
+      <div className="products">
+        {products.map((product) => (
+          <div className="product" key={product._id}>
+            {product.images && product.images.length > 0 ? (
+              <img
+                src={product.images[0]}
+                height={200}
+                width={200}
+                alt={product.name}
+              />
+            ) : (
+              <img src="./noImage.webp"/>
+            )}
+            <h3>{product.name}</h3>
+            <p>${product.price}</p>
+            <div className="buttons">
+              <Link to={`/products/${product._id}`} className="add-to-cart">
+                Details
+              </Link>
+              <button
+                className="add-to-cart"
+                onClick={() => handleAddToCart(product._id)}
+              >
+                Add to Cart
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
     </>
   );
 };

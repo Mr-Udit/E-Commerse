@@ -8,6 +8,8 @@ import Products from "./pages/Products";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
+import Dashboard from "./pages/Dashboard";
+import ProductForm from "./pages/CreateProduct";
 
 const App = () => {
   return (
@@ -65,6 +67,26 @@ const App = () => {
           <>
             <Header />
             <Cart/>
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <>
+            <Header />
+            <Dashboard/>
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/create-product"
+        element={
+          <>
+            <Header />
+            <ProductForm/>
             <Footer />
           </>
         }

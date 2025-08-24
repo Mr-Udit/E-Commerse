@@ -141,7 +141,7 @@ header {
   font-size: 20px;
   transition: color 0.3s ease;
 }
-.nav-links a:hover {
+.nav-links li:hover a{
   color: green;
   text-shadow: 0px 0px 10px rgba(120, 180, 120, 0.5);
 }
@@ -165,12 +165,14 @@ header {
 }
 .nav-links .submenu ul li a {
   color: white;
-  font-size: 16px;
+  font-size: 20px;
 }
-.nav-links .submenu ul li a:hover {
-  color: green;
+.submenu ul li a:hover {
+  color: red;
   text-shadow: 0px 0px 10px rgba(120, 180, 120, 0.5);
 }
+
+
 .hero-container {
   display: flex;
   flex-direction: column;
@@ -248,7 +250,7 @@ header {
 }
 
 .products .product {
-  width: fit-content;
+  width: 270px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -269,9 +271,11 @@ header {
 }
 .products .product h3 {
   font-size: 24px;
+  text-transform: capitalize;
 }
 .products .product p {
-  font-size: 20px;
+  font-size: 15px;
+  text-transform: capitalize;
 }
 
 .buttons {
@@ -281,7 +285,10 @@ header {
 
 .buttons button,
 .buttons a {
-  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px;
   font-size: 16px;
   color: white;
   background-color: green;

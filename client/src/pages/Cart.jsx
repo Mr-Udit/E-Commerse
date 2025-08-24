@@ -1,7 +1,4 @@
-
-
 import React, { useState, useEffect } from "react";
-
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +18,8 @@ const Cart = () => {
         if (!response.ok) throw new Error("Failed to fetch cart");
 
         const data = await response.json();
-        setCartItems(data.cart?.items || []);
+        console.log(data.cart.items)
+        setCartItems(data.cart.items || []);
       } catch (error) {
         console.error("Error fetching cart:", error);
       } finally {
@@ -69,14 +67,21 @@ const Cart = () => {
       if (!response.ok) throw new Error("Failed to remove item");
 
       const data = await response.json();
-      setCartItems(data.cart.items);
+      // console.log(cartItems)
+      setCartItems(data.cart.items || []);
+      // console.log(cartItems);
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
   };
 
   if (loading) return <p>Loading cart...</p>;
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0
+  );
 
+  // console.log(cartItems)
   return (
     <div className="cart-container">
       <h2 className="cart-title">My Cart</h2>
@@ -88,13 +93,13 @@ const Cart = () => {
         cartItems.map((item) => (
           <div key={item._id} className="cart-item">
             <img
-              src={item.product?.image || "https://via.placeholder.com/100"}
+              src={item.product.images[0] || "./noImage.webp"}
               alt={item.product.name}
               className="cart-item-img"
             />
             <div className="cart-item-info">
-              <h4>{item.product?._id}</h4>
-              <p>₹{item.price}</p>
+              <h4>{item.product?.name}</h4>
+              <p>₹{item.product.price}</p>
               <div className="quantity-control">
                 <button
                   onClick={() =>
@@ -105,7 +110,7 @@ const Cart = () => {
                 >
                   -
                 </button>
-                <span style={styles.qty}>{item.quantity}</span>
+                <span >{item.quantity}</span>
                 <button
                   onClick={() =>
                     updateQuantity(item.product._id, item.quantity + 1)
@@ -125,40 +130,22 @@ const Cart = () => {
         ))
       )}
       </div>
+      {/* ✅ Total Price Section */}
+      {cartItems.length > 0 && (
+        <div className="cart-summary">
+          <h3>Total Price: ₹{totalPrice}</h3>
+        </div>
+      )}
+      {cartItems.length > 0 && (
+        <div className="cart-summary">
+      <button className="checkout-btn" onClick={() => alert("Proceeding to checkout...")}>
+        Proceed to Checkout
+      </button>
+    </div>
+      )}
+    
     </div>
   );
-};
-
-// Inline styles
-const styles = {
-  container: { padding: "20px" },
-  heading: { fontSize: "24px", marginBottom: "20px" },
-  item: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: "15px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    padding: "10px",
-  },
-  image: {
-    width: "80px",
-    height: "80px",
-    objectFit: "cover",
-    marginRight: "15px",
-  },
-  info: { flex: 1 },
-  controls: { display: "flex", alignItems: "center", marginTop: "5px" },
-  qty: { margin: "0 10px" },
-  removeBtn: {
-    background: "red",
-    color: "white",
-    padding: "5px 10px",
-    border: "none",
-    borderRadius: "5px",
-    marginTop: "5px",
-    cursor: "pointer",
-  },
 };
 
 export default Cart;

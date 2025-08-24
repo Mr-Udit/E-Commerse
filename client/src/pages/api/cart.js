@@ -1,7 +1,5 @@
-
-
 // Add a new product to cart
-export const addToCart = async (productId, quantity=1) => {
+export const addToCart = async (productId, quantity = 1) => {
     try {
         const token = localStorage.getItem("token");
         const response = await fetch("http://localhost:5000/api/cart/add", {
@@ -12,8 +10,15 @@ export const addToCart = async (productId, quantity=1) => {
             },
             body: JSON.stringify({ productId, quantity }),
         });
+        const data = await response.json();
+        if (!response.ok) {
+            if (response.status === 400) {
+                // const errorData = await response.json(); // backend usually sends { message: "...error..." }
+                alert(data.message);
+            }
+        }
 
-        if (!response.ok) throw new Error("Failed to add item");
+        return data.message;
     } catch (error) {
         console.error("Error adding to cart:", error);
     }

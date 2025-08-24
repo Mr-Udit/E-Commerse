@@ -4,10 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 const Header = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false); // Placeholder for submenu state, can be managed with useState if needed
+  const [isOpen, setIsOpen] = useState(false);
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    setIsOpen(false);
     navigate("/login");
     alert("Logout successful");
   };
@@ -46,21 +47,26 @@ const Header = () => {
             <li className="triger">
               <Link style={{ display: token ? "block" : "none" }}>
                 <span onClick={handleSubMenu}>user</span>
+              </Link>
                 <div
                   className="submenu"
                   style={{ display: isOpen ? "flex" : "none" }}
                 >
                   <ul>
-                    <li>
-                      <span>Profile</span>
+                    <li style={{ display: token ? "block" : "none" }}>
+                      <span>{localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).role || "user" : ""}</span>
                     </li>
-                    <li>dashboard</li>
+                    <li>
+                      <Link to="/profile">Profile</Link>
+                    </li>
+                    <li>
+                      <Link to="/dashboard">dashboard</Link>
+                    </li>
                     <li>
                       <span onClick={handleLogout}>Logout</span>
                     </li>
                   </ul>
                 </div>
-              </Link>
             </li>
           </ul>
         </div>

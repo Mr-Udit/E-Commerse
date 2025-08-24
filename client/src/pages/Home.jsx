@@ -1,7 +1,6 @@
-import React from "react";
 import { Link } from "react-router-dom";
 const Home = () => {
-  console.log(localStorage.getItem("token"));
+  // console.log(localStorage.getItem("user"));
   return (
     <div>
       <section id="hero" className="hero">
@@ -24,45 +23,41 @@ const Home = () => {
           <div className="products">
             <div className="product">
               <img src="product.png" height={200} width={200} alt="Product 1" />
-              <h3>Product 1</h3>
-              <p>$19.99</p>
+              <h3>Mens</h3>
+              <p>Explore the Mens Products</p>
               <div className="buttons">
-                <button className="add-to-cart">Details</button>
-                <button className="add-to-cart">Add to Cart</button>
+                <button className="add-to-cart">Browse</button>
               </div>
             </div>
             <div className="product">
               <img src="product.png" height={200} width={200} alt="Product 1" />
-              <h3>Product 2</h3>
-              <p>$19.99</p>
+              <h3>Womens</h3>
+              <p>Explore the Women Products</p>
               <div className="buttons">
-                <button className="add-to-cart">Details</button>
-                <button className="add-to-cart">Add to Cart</button>
+                <button className="add-to-cart">Browse</button>
               </div>
             </div>
             <div className="product">
               <img src="product.png" height={200} width={200} alt="Product 1" />
-              <h3>Product 3</h3>
-              <p>$19.99</p>
+              <h3>Home and Kitchen</h3>
+              <p>Explore the Home and Kitchen Products</p>
               <div className="buttons">
-                <button className="add-to-cart">Details</button>
-                <button className="add-to-cart">Add to Cart</button>
+                <button className="add-to-cart">Browse</button>
               </div>
             </div>
             <div className="product">
               <img src="product.png" height={200} width={200} alt="Product 1" />
-              <h3>Product 4</h3>
-              <p>$19.99</p>
+              <h3>Electronics and accessories</h3>
+              <p>find the best acessories for you. </p>
               <div className="buttons">
-                <button className="add-to-cart">Details</button>
-                <button className="add-to-cart">Add to Cart</button>
+                <button className="add-to-cart">Browse</button>
               </div>
             </div>
           </div>
         </div>
       </section>
       <div className="seperator"></div>
-      <section className="categores">
+      {/* <section className="categores">
         <div className="categories-container">
           <h2>Explore Our Categories</h2>
           <p className="p">Find products tailored to your needs</p>
@@ -89,7 +84,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
